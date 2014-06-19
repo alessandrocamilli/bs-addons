@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>  
+		
+		<menuitem id="menu_eib_connector_main" name="EIB Connector" parent="base.menu_custom" sequence="70" groups="group_eib_connector_user,group_eib_connector_manager"/>
+        
+        <!-- 
+        Server
+         -->
+        <record id="eib_conn_server_tree_view" model="ir.ui.view">
+            <field name="name">eib.conn.server.tree</field>
+            <field name="model">eib.conn.server</field>
+            <field name="arch" type="xml">
+            	
+                <tree string="Servers" version="7.0">
+                    <field name="active"/>
+                    <field name="name"/>
+                    <field name="host_name"/>
+                    <field name="host_user"/>
+                </tree>
+            </field>
+        </record>
+        <record id="eib_conn_server_form_view" model="ir.ui.view">
+            <field name="name">eib.conn.server.form</field>
+            <field name="model">eib.conn.server</field>
+            <field name="arch" type="xml">
+                <form string="Server">
+                    <group colspan="2">
+                    <field name="active"/>
+                    <field name="name"/>
+                    </group>
+                    <newline/>
+                    <group>
+                    <field name="host_name"/>
+                    <field name="host_port"/>
+                    <field name="host_sid"/>
+                    </group>
+                    <group>
+                    <field name="host_user"/>
+                    <field name="host_password"/>
+                    </group>
+                    <newline/>
+                    <group colspan="2">
+                    <field name="ws_base_url"/>
+                    <field name="ws_user"/>
+                    <field name="ws_password"/>
+                    </group>
+                    <newline/>
+                    <notebook colspan="2">
+                        <page string="Partner">
+                            <group string="Contraente">
+                                <field name="partner_contraente_category_ids" widget="many2many_tags"/>
+                            </group>
+                            <group string="Compagnia">
+                                <field name="partner_compagnia_category_ids" widget="many2many_tags"/>
+                            </group>
+                            <group string="Produttore">
+                                <field name="partner_produttore_category_ids" widget="many2many_tags"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Action Log Move -->
+        <record id="action_eib_connector_server" model="ir.actions.act_window">
+			<field name="name">Servers</field>
+			<field name="type">ir.actions.act_window</field>
+	        <field name="res_model">eib.conn.server</field>
+	        <field name="view_type">form</field>
+	        <field name="view_mode">tree,form</field>
+	        <field name="view_id" ref="eib_conn_server_tree_view"/>
+	        <field name="help"></field>
+	        <!-- <field name="search_view_id" ref="openforce_salesman_commission_item_search_view" /> -->
+    	</record>
+        
+        <menuitem action="action_eib_connector_server" id="menu_eib_connector_server" parent="menu_eib_connector_main"/>
+        
+        
+        <!-- 
+        Log move
+         -->
+        <record id="eib_conn_log_move_tree_view" model="ir.ui.view">
+            <field name="name">eib.conn.log.move.tree</field>
+            <field name="model">eib.conn.log.move</field>
+            <field name="arch" type="xml">
+            	
+                <tree string="Log Moves" version="7.0">
+                    <field name="date"/>
+                    <field name="server_id"/>
+                    <field name="last_sync_id"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="eib_conn_log_move_form_view" model="ir.ui.view">
+            <field name="name">eib.conn.log.move.form</field>
+            <field name="model">eib.conn.log.move</field>
+            <field name="arch" type="xml">
+                <form string="Log move">
+                    <group colspan="2">
+                    <field name="date"/>
+                    <field name="server_id"/>
+                    </group>
+                    <newline/>
+                    <notebook>
+                        <page string="Partners">
+                            <field name="partner_line_ids" nolabel="1">
+                            <tree>
+                                <field name="partner_id"/>
+                                <field name="description"/>
+                                <field name="error"/>
+                                <field name="error_message"/>
+                            </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Action Log Move -->
+        <record id="action_eib_connector_log_move" model="ir.actions.act_window">
+			<field name="name">Log Moves</field>
+			<field name="type">ir.actions.act_window</field>
+	        <field name="res_model">eib.conn.log.move</field>
+	        <field name="view_type">form</field>
+	        <field name="view_mode">tree,form</field>
+	        <field name="view_id" ref="eib_conn_log_move_tree_view"/>
+	        <field name="help"></field>
+	        <!-- <field name="search_view_id" ref="openforce_salesman_commission_item_search_view" /> -->
+    	</record>
+    	    	
+    	<menuitem action="action_eib_connector_log_move" id="menu_eib_connector_log_move" parent="menu_eib_connector_main"/>
+        
+    </data>
+</openerp>
