@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+       <record forcecreate="1" id="res_partner_category_1" model="res.partner.category">
+           <field name="name">Contraente</field>
+           <!--<field name="sequence_id" ref="auto_invoice_journal_sequence"/>-->
+       </record>
+       <record forcecreate="1" id="res_partner_category_2" model="res.partner.category">
+           <field name="name">Compagnia Assicurazione</field>
+           <!--<field name="sequence_id" ref="auto_invoice_journal_sequence"/>-->
+       </record>
+       <record forcecreate="1" id="res_partner_category_3" model="res.partner.category">
+           <field name="name">Cliente</field>
+           <!--<field name="sequence_id" ref="auto_invoice_journal_sequence"/>-->
+       </record>
+
+    </data>
+</openerp>

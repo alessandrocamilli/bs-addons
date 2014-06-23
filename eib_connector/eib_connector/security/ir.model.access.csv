@@ -1,0 +1,6 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+
+group_eib_conn_log_move_user,eib_conn_log_move user,model_eib_conn_log_move,group_eib_connector_user,1,0,0,0
+group_eib_conn_log_move_manager,eib_conn_log_move manager,model_eib_conn_log_move,group_eib_connector_manager,1,1,1,1
+group_eib_conn_log_partner_user,eib_conn_log_partner user,model_eib_conn_log_partner,group_eib_connector_user,1,0,0,0
+group_eib_conn_log_partner_manager,eib_conn_log_partner manager,model_eib_conn_log_partner,group_eib_connector_manager,1,1,1,1

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="eib_conn_wizard_sync" model="ir.ui.view">
+            <field name="name">Sincronizza</field>
+            <field name="model">eib.conn.wizard.sync</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Sincronizza">
+                    <group colspan="4">
+                        <separator colspan="4"/>
+                        <button icon="gtk-cancel" special="cancel" string="Cancel"/>
+                        <button icon="gtk-ok" name="execute_sync" string="Esegui" type="object"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        
+      	<record id="eib_conn_wizard_sync_action" model="ir.actions.act_window">
+            <field name="name">Sincronizza</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">eib.conn.wizard.sync</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="eib_conn_wizard_sync"/>
+            <!-- <field name="search_view_id" ref="spesometro_comunicazione_search" /> -->
+        </record>
+        
+        <menuitem action="eib_conn_wizard_sync_action" id="menu_eib_connector_wizard_sync" parent="menu_eib_connector_main"/>
+         
+    </data>
+</openerp>

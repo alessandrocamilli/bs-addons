@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <record id="group_eib_connector_user" model="res.groups">
+        <field name="name">EIB Connector User</field>
+    </record>
+
+    <record id="group_eib_connector_manager" model="res.groups">
+        <field name="name">EIB Connector Manager</field>
+    </record>
+    
+</data></openerp>
