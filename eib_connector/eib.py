@@ -358,9 +358,9 @@ class eib_conn_server(orm.Model):
         'ws_user': fields.char('Webservice user', required=True),
         'ws_password': fields.char('Webservice password', required=True),
         
-        'partner_contraente_category_ids': fields.many2many('res.partner.category', string='Categories'),
-        'partner_compagnia_category_ids': fields.many2many('res.partner.category', string='Categories'),
-        'partner_produttore_category_ids': fields.many2many('res.partner.category', string='Categories'),
+        #'partner_contraente_category_ids': fields.many2many('res.partner.category', string='Categories'),
+        #'partner_compagnia_category_ids': fields.many2many('res.partner.category', string='Categories'),
+        #'partner_produttore_category_ids': fields.many2many('res.partner.category', string='Categories'),
     }
     _defaults = {
         'active': True,

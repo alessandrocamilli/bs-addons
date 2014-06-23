@@ -49,13 +49,13 @@
                     <notebook colspan="2">
                         <page string="Partner">
                             <group string="Contraente">
-                                <field name="partner_contraente_category_ids" widget="many2many_tags"/>
+                                <!-- <field name="partner_contraente_category_ids" widget="many2many_tags"/> -->
                             </group>
                             <group string="Compagnia">
-                                <field name="partner_compagnia_category_ids" widget="many2many_tags"/>
+                                <!-- <field name="partner_compagnia_category_ids" widget="many2many_tags"/> -->
                             </group>
                             <group string="Produttore">
-                                <field name="partner_produttore_category_ids" widget="many2many_tags"/>
+                                <!-- <field name="partner_produttore_category_ids" widget="many2many_tags"/> -->
                             </group>
                         </page>
                     </notebook>
