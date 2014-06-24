@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>  
+        
+        <!-- 
+        Partner
+         -->
+         <record id="eib_conn_partner_individual_data" model="ir.ui.view">
+            <field name="name">eib.conn.partner.individual.data.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="openforce_base_person.openforce_personal_partner_view_form"/>
+            <field name="arch" type="xml">
+                
+                <xpath expr="//field[@name='person_profession']" position="replace">
+           		</xpath>
+           		<xpath expr="//field[@name='person_marital_status']" position="after">
+                	<field name="eib_person_profession"/>
+           		</xpath>
+                
+            </field>
+		</record>
 		
 		<menuitem id="menu_eib_connector_main" name="EIB Connector" parent="base.menu_custom" sequence="70" groups="group_eib_connector_user,group_eib_connector_manager"/>
         

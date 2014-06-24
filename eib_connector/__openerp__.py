@@ -29,7 +29,7 @@
     'author': 'Alessandro Camilli',
     'website': 'http://www.openforce.it',
     'license': 'AGPL-3',
-    "depends" : ['account', ],
+    "depends" : ['account', 'openforce_base_person'],
     "data" : [
         'security/security.xml',
         'eib_data.xml',

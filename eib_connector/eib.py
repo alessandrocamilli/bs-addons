@@ -28,6 +28,13 @@ import base64
 import json
 import datetime
 
+class res_partner(orm.Model):
+    
+    _inherit = 'res.partner'
+    _columns = {
+            'eib_person_profession': fields.many2one('eib.conn.profession', string='Profession'),
+        }
+
 class eib_conn_log_move(orm.Model):
     
     _name = "eib.conn.log.move"
@@ -50,7 +57,7 @@ class eib_conn_log_move(orm.Model):
     def _set_address(self, cr, uid, address_from_EIB):
             
             values = {
-                    'is_company' : True,
+                    'is_company' : False,
                     #'ref' : element_to_import['ref'],
                     #'name' : partner_from_EIB['ragione_sociale'],
                     'street' : address_from_EIB['indirizzo'],
@@ -132,7 +139,7 @@ class eib_conn_log_move(orm.Model):
         eib_server_ids = eib_server_obj.search(cr, uid, [('active','=', True)])
         
         for eib_server in eib_server_obj.browse(cr, uid, eib_server_ids):
-            print "xx"
+            
             try:
                 dsn = cx_Oracle.makedsn(eib_server.host_name, eib_server.host_port, eib_server.host_sid)
                 eib_db = cx_Oracle.connect(eib_server.host_user, eib_server.host_password, dsn)
@@ -154,6 +161,11 @@ class eib_conn_log_move(orm.Model):
                 }
             move_id = self.create(cr, uid, val)
             
+            #
+            # Sync config tables
+            #
+            self.sync_table_profession(cr, uid, eib_db, move_id, eib_server)
+            
             # Tables to syncronize >>> DA VERIFICARE: cosa sono UNITS
             tables_enabled = ['ANAGRAFICHE_SOGGETTI', 'CONTRAENTI', 'COMPAGNIE', 'PRODUTTORI', 'UNITS']
                 
@@ -171,9 +183,9 @@ class eib_conn_log_move(orm.Model):
                     break
                 #
                 # >> DA TOGLIERE!!!!!!!!!!!!!!!!!<<<<
-                if line[0] == 731656 :
-                    import pdb
-                    pdb.set_trace()
+                #if line[0] == 731656 :
+                #    import pdb
+                #    pdb.set_trace()
                 
                 log_id = line[0]
                 table_name = line[4]
@@ -196,9 +208,6 @@ class eib_conn_log_move(orm.Model):
                     cont += 1
                 last_id = line[0]
                 
-                
-                
-                
             # Move sync - update with last id
             val = {
                 'last_sync_id': last_id,
@@ -218,11 +227,38 @@ class eib_conn_log_move(orm.Model):
         log_partner_obj = self.pool['eib.conn.log.partner']
         
         def _set_partner(partner_from_EIB):
+            profession_obj = self.pool['eib.conn.profession']
             # setup P.IVA 
             setup_vat = False
             if partner_from_EIB['partitaIva']:
                 p_iva = '{:11s}'.format(partner_from_EIB['partitaIva'].zfill(11)) 
                 setup_vat = 'IT' + p_iva #<<< da impostare in base al codice stato
+            # persona giuridica/fisica
+            setup_persona = False
+            if partner_from_EIB['persona'] == 'G':
+                setup_persona = 'legal'
+            else:
+                setup_persona = 'individual'
+            # stato civile
+            setup_marital_status = False
+            if partner_from_EIB['statoCivile'] == '1':
+                setup_marital_status = 'single'
+            elif partner_from_EIB['statoCivile'] == '2':
+                setup_marital_status = 'married'
+            elif partner_from_EIB['statoCivile'] == '3':
+                setup_marital_status = 'widower'
+            elif partner_from_EIB['statoCivile'] == '4':
+                setup_marital_status = 'divorced'
+            # Profession
+            setup_profession = False
+            domain = [('code', '=', partner_from_EIB['professioneSigla'])]
+            prof_ids = profession_obj.search(cr, uid, domain)
+            if prof_ids:
+                prof = profession_obj.browse(cr, uid, prof_ids[0])
+                setup_profession = prof.id
+            #
+            # Setting values
+            #
             values = {
                     'is_company' : True,
                     'customer' : True,
@@ -241,6 +277,18 @@ class eib_conn_log_move(orm.Model):
                     'vat' : setup_vat,
                     'fiscalcode' : partner_from_EIB['codiceFiscale'],
                     'comment' : partner_from_EIB['note'],
+                    'person_surname' : partner_from_EIB['cognome'],
+                    'person_name' : partner_from_EIB['nome'],
+                    'person_gender' : partner_from_EIB['sesso'],
+                    'person_marital_status' : partner_from_EIB['statoCivile'],
+                    'person_profession' : setup_profession,
+                    #>>>> mancano
+                    #'person_date_of_birth': fields.date('Date of birth'),
+                    #'person_city_of_birth': fields.char('City of birth', size=64),
+                    #'person_province_of_birth': fields.many2one('res.province', string='Province'),
+                    #'person_region_of_birth': fields.many2one('res.region', string='Region'),
+                    #'person_country_of_birth': fields.many2one('res.country', string='Country'),
+                    #<<<<
                     }
             return values
         
@@ -314,6 +362,7 @@ class eib_conn_log_move(orm.Model):
                 address_data = self._set_address(cr, uid, contraente['indirizzoPrincipale'])
                 partner_obj.write(cr, uid, [partner_id], address_data)
                 self._update_rel_address(cr, uid, contraente['indirizzoPrincipale']['id'], partner_id)
+            
             # ... Indirizzo secondario
             if partner_id and ('indirizzoSecondario' in contraente):
                 x = self._partner_from_address(cr, uid, contraente['indirizzoSecondario'], partner_id)
@@ -339,8 +388,28 @@ class eib_conn_log_move(orm.Model):
                 }
             log_id = log_partner_obj.create(cr, uid, val)
             return False
-        
         return True
+    
+    def sync_table_profession(self, cr, uid, eib_db, move_id, eib_server):
+        profession_obj = self.pool['eib.conn.profession']
+        
+        sql = "SELECT codice, denominazione_it FROM PAR_PROFESSIONE "
+        
+        cursor = eib_db.cursor()
+        cursor.execute(sql)
+        for element in cursor.fetchall():
+            vals = {
+                'code': element[0],
+                'name': element[1],
+                }
+            domain = [('code', '=', element[0])]
+            el_ids = profession_obj.search(cr, uid, domain)
+            if el_ids:
+                profession_obj.write(cr, uid, el_ids, vals)
+            else:
+                el_id = profession_obj.create(cr, uid, vals)
+        return True
+    
     
 class eib_conn_server(orm.Model):
     
@@ -394,4 +463,13 @@ class eib_conn_rel_address(orm.Model):
     _columns = {
         'eib_address_id': fields.integer('EIB address id'),
         'partner_id': fields.many2one('res.partner', 'Partner', readonly=True),
+    }
+    
+class eib_conn_profession(orm.Model):
+    
+    _name = "eib.conn.profession"
+    _description = "EIB connector - Profession"
+    _columns = {
+        'code': fields.char('Code', size=2),
+        'name': fields.char('Name', size=64),
     }
