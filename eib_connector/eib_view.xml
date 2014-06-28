@@ -21,6 +21,7 @@
 		</record>
 		
 		<menuitem id="menu_eib_connector_main" name="EIB Connector" parent="base.menu_custom" sequence="70" groups="group_eib_connector_user,group_eib_connector_manager"/>
+		<menuitem id="menu_eib_connector_config" name="Config" parent="menu_eib_connector_main" sequence="100" groups="group_eib_connector_user,group_eib_connector_manager"/>
         
         <!-- 
         Server
@@ -64,16 +65,39 @@
                     <field name="ws_password"/>
                     </group>
                     <newline/>
+                    <button name="sync_config_table" string="Syncronize Config Table" type="object"/>
+                    <newline/>
                     <notebook colspan="2">
                         <page string="Partner">
                             <group string="Contraente">
-                                <!-- <field name="partner_contraente_category_ids" widget="many2many_tags"/> -->
+                                <field name="partner_contraente_category_ids" nolabel="1">
+                                    <form>
+	                                    <field name="category_id"/>
+	                                </form>
+                                	<tree>
+	                                    <field name="category_id"/>
+	                                </tree>
+	                        	</field> 
                             </group>
                             <group string="Compagnia">
-                                <!-- <field name="partner_compagnia_category_ids" widget="many2many_tags"/> -->
+                                <field name="partner_compagnia_category_ids" nolabel="1">
+                                    <form>
+	                                    <field name="category_id"/>
+	                                </form>
+                                	<tree>
+	                                    <field name="category_id"/>
+	                                </tree>
+                               	</field> 
                             </group>
                             <group string="Produttore">
-                                <!-- <field name="partner_produttore_category_ids" widget="many2many_tags"/> -->
+                                <field name="partner_produttore_category_ids" nolabel="1">
+                                    <form>
+	                                    <field name="category_id"/>
+	                                </form>
+                                	<tree>
+	                                    <field name="category_id"/>
+	                                </tree>
+                                </field> 
                             </group>
                         </page>
                     </notebook>
@@ -127,10 +151,45 @@
                             <field name="partner_line_ids" nolabel="1">
                             <tree>
                                 <field name="partner_id"/>
+                                <field name="eib_table"/>
                                 <field name="description"/>
                                 <field name="error"/>
                                 <field name="error_message"/>
                             </tree>
+                            <form>
+                                <group>
+                                    <field name="partner_id"/>
+	                                <field name="eib_table"/>
+	                            </group>
+	                            <group colspan="4">
+	                                <field name="description"/>
+	                            </group>
+	                            <group>
+	                                <field name="error"/>
+	                                <field name="error_message"/>
+                                </group>
+                                <newline/>
+                                <group string="Partner relation">
+	                                <field name="rel_partner_ids">
+	                                    <tree>
+	                                    	<field name="active"/>
+	                                    	<field name="partner_id"/>
+	                                    	<field name="eib_partner_id"/>
+	                                    </tree>
+	                                </field>
+                                </group>
+                                <newline/>
+                                <group string="Address relation">
+	                                <field name="rel_address_ids">
+	                                    <tree>
+	                                    	<field name="active"/>
+	                                    	<field name="partner_id"/>
+	                                    	<field name="eib_address_id"/>
+	                                    </tree>
+	                                </field>
+                                </group>
+                                
+                            </form>
                             </field>
                         </page>
                     </notebook>
@@ -152,5 +211,93 @@
     	    	
     	<menuitem action="action_eib_connector_log_move" id="menu_eib_connector_log_move" parent="menu_eib_connector_main"/>
         
+    	<!-- 
+        Config Address Type
+         -->
+        <record id="eib_conn_address_type_tree_view" model="ir.ui.view">
+            <field name="name">eib.conn.address.type.tree</field>
+            <field name="model">eib.conn.address.type</field>
+            <field name="arch" type="xml">
+            	
+                <tree string="Address Type" version="7.0">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="main"/>
+                    <field name="rel_type"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="eib_conn_address_type_form_view" model="ir.ui.view">
+            <field name="name">eib.conn.address.type.form</field>
+            <field name="model">eib.conn.address.type</field>
+            <field name="arch" type="xml">
+                <form string="Address Type">
+                    <group colspan="2">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="main"/>
+                    <field name="rel_type"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        
+        <record id="eib_conn_address_type_action" model="ir.actions.act_window">
+			<field name="name">Address Type</field>
+			<field name="type">ir.actions.act_window</field>
+	        <field name="res_model">eib.conn.address.type</field>
+	        <field name="view_type">form</field>
+	        <field name="view_mode">tree,form</field>
+	        <field name="view_id" ref="eib_conn_address_type_tree_view"/>
+	        <field name="help"></field>
+	        <!-- <field name="search_view_id" ref="openforce_salesman_commission_item_search_view" /> -->
+    	</record>
+    	    	
+    	<menuitem action="eib_conn_address_type_action" id="menu_eib_conn_address_type" parent="menu_eib_connector_config"/>
+        
+    	<!-- 
+        Config Profession
+         -->
+        <record id="eib_conn_profession_tree_view" model="ir.ui.view">
+            <field name="name">eib.conn.profession.tree</field>
+            <field name="model">eib.conn.profession</field>
+            <field name="arch" type="xml">
+            	
+                <tree string="Profession" version="7.0">
+                    <field name="code"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="eib_conn_profession_form_view" model="ir.ui.view">
+            <field name="name">eib.conn.profession.form</field>
+            <field name="model">eib.conn.profession</field>
+            <field name="arch" type="xml">
+                <form string="Profession">
+                    <group colspan="2">
+                    <field name="code"/>
+                    <field name="name"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        
+        <record id="eib_conn_profession_action" model="ir.actions.act_window">
+			<field name="name">Profession</field>
+			<field name="type">ir.actions.act_window</field>
+	        <field name="res_model">eib.conn.profession</field>
+	        <field name="view_type">form</field>
+	        <field name="view_mode">tree,form</field>
+	        <field name="view_id" ref="eib_conn_profession_tree_view"/>
+	        <field name="help"></field>
+	        <!-- <field name="search_view_id" ref="openforce_salesman_commission_item_search_view" /> -->
+    	</record>
+    	    	
+    	<menuitem action="eib_conn_profession_action" id="menu_eib_conn_profession" parent="menu_eib_connector_config"/>
+         
+         
+    	
     </data>
 </openerp>
