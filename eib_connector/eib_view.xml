@@ -67,6 +67,27 @@
                     <newline/>
                     <button name="sync_config_table" string="Syncronize Config Table" type="object"/>
                     <newline/>
+                    <group string="Mailing Alerts">
+                        <field name="mail_message_from" on_change="on_change_mail_message_from(mail_message_from, context)" colspan="2"></field>
+                        <newline/>
+	                    <field name="mailing_list_ids" nolabel="1" colspan="2">
+	                        <form>
+	                            <group colspan="4">
+		                            <field name="message_type_error"/>
+		                            <field name="message_type_chain"/>
+		                            <field name="message_type_normal"/>
+		                            <field name="mail"/>
+	                            </group>
+	                        </form>
+	                        <tree>
+	                            <field name="message_type_error"/>
+	                            <field name="message_type_chain"/>
+	                            <field name="message_type_normal"/>
+	                            <field name="mail"/>
+	                        </tree>
+	                  	</field>
+                  	</group>
+                  	<newline/> 
                     <notebook colspan="2">
                         <page string="Partner">
                             <group string="Contraente">
